@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+if ! docker compose ps laravel.test --status running -q 2>/dev/null | grep -q .; then
+    echo "Suba o Sail antes: docker compose up -d" >&2
+    exit 1
+fi
+
+docker compose exec -T -u root laravel.test chown -R 1000:1000 /var/www/html
+echo "Permissões ajustadas (uid/gid 1000 = seu usuário no .env WWWUSER)."

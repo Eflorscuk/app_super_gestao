@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [ -x /usr/bin/docker ]; then
+    REAL_DOCKER=/usr/bin/docker
+elif [ -x /usr/local/bin/docker ]; then
+    REAL_DOCKER=/usr/local/bin/docker
+else
+    REAL_DOCKER="$(command -v -p /usr/bin docker || command -v docker)"
+fi
+
+if [ "${1:-}" = compose ] && [ "${2:-}" = exec ] && [ "${3:-}" = laravel.test ]; then
+    shift 3
+    for arg in "$@"; do
+        if [ "$arg" = "-u" ] || [[ "$arg" == -u* ]] || [ "$arg" = "--user" ]; then
+            exec "$REAL_DOCKER" compose exec laravel.test "$@"
+        fi
+    done
+    exec "$REAL_DOCKER" compose exec -u sail laravel.test "$@"
+fi
+
+exec "$REAL_DOCKER" "$@"
