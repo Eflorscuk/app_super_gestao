@@ -17,8 +17,9 @@ Route::get('/contato', [Contato::class, 'contato'])->name('site.contato');
 Route::post('/contato', [Contato::class, 'salvar'])->name('site.contato');
 
 Route::get('/login', [Login::class, 'index'])->name('site.login');
+Route::post('/login', [Login::class, 'autenticar'])->name('site.login');
 
-Route::prefix('app')->group(function () {
+Route::middleware('autenticacao:padrao,visitante')->prefix('app')->group(function () {
     Route::get('/clientes', [Clientes::class, 'index'])->name('app.clientes');
     Route::get('/fornecedores', [Fornecedores::class, 'index'])->name('app.fornecedores');
     Route::get('/produtos', [Produtos::class, 'index'])->name('app.produtos');

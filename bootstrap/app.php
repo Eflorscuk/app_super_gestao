@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\LogAcessoMiddleware;
+use App\Http\Middleware\AutenticacaoMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -12,7 +14,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->web(append: [
+            LogAcessoMiddleware::class,
+        ]);
+
+        $middleware->alias([
+            'log.acesso' => LogAcessoMiddleware::class,
+            'autenticacao' => AutenticacaoMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
